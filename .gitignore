@@ -1,0 +1,23 @@
+# Build output
+/bin/
+
+# Go test artifacts
+*.test
+*.out
+coverage.*
+profile.*
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Scratch / local only
+/tmp/
+*.local.md
