@@ -46,9 +46,13 @@ release:
 	@for platform in $(PLATFORMS); do \
 	  os=$${platform%/*}; \
 	  arch=$${platform#*/}; \
-	  output="dist/threads2md-$${os}-$${arch}"; \
-	  echo "Building $${output}..."; \
-	  GOOS=$${os} GOARCH=$${arch} go build -ldflags="-s -w -X main.version=$(VERSION)" -o $${output} ./cmd/threads2md; \
+	  name="threads2md_$(VERSION)_$${os}_$${arch}"; \
+	  binary="dist/$${name}/threads2md"; \
+	  mkdir -p "dist/$${name}"; \
+	  echo "Building $${name}..."; \
+	  GOOS=$${os} GOARCH=$${arch} go build -ldflags="-s -w -X main.version=$(VERSION)" -o "$${binary}" ./cmd/threads2md; \
+	  tar -czf "dist/$${name}.tar.gz" -C dist "$${name}"; \
+	  rm -rf "dist/$${name}"; \
 	done
 
 clean:
