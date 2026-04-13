@@ -21,6 +21,9 @@ import (
 	nurl "github.com/minuchi/threads2md/internal/url"
 )
 
+// version is set at build time via -ldflags.
+var version = "dev"
+
 const (
 	exitOK        = 0
 	exitInput     = 1
@@ -48,6 +51,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 		plain           bool
 		jsonOut         bool
 		verbose         bool
+		showVersion     bool
 		timeout         time.Duration
 		fixturePath     string
 		renderedFixture string
@@ -65,6 +69,7 @@ func run(args []string, stdout, stderr io.Writer) int {
 	fs.DurationVar(&timeout, "timeout", 45*time.Second, "fetch timeout (includes headless render)")
 	fs.BoolVar(&noReplies, "no-replies", false, "skip reply extraction (faster, no Chrome needed)")
 	fs.BoolVar(&noHeadless, "no-headless", false, "force HTTP-only fetch (implies -no-replies)")
+	fs.BoolVar(&showVersion, "version", false, "print version and exit")
 	fs.StringVar(&fixturePath, "fixture", "", "read OG-source HTML from a local file instead of fetching (testing only)")
 	fs.StringVar(&renderedFixture, "rendered-fixture", "", "read rendered HTML from a local file for reply extraction (testing only)")
 
@@ -78,6 +83,11 @@ func run(args []string, stdout, stderr io.Writer) int {
 			return exitOK
 		}
 		return exitInput
+	}
+
+	if showVersion {
+		fmt.Fprintf(stdout, "threads2md %s\n", version)
+		return exitOK
 	}
 
 	if fs.NArg() != 1 {

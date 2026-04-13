@@ -1,4 +1,4 @@
-.PHONY: build test lint fmt-check tidy-check smoke sanity clean
+.PHONY: build test lint fmt-check tidy-check smoke sanity clean release
 
 BIN := ./bin/threads2md
 
@@ -38,5 +38,18 @@ smoke: build
 sanity: fmt-check tidy-check lint test build smoke
 	@echo "sanity passed"
 
+PLATFORMS := linux/amd64 linux/arm64 darwin/amd64 darwin/arm64
+VERSION ?= dev
+
+release:
+	@mkdir -p dist
+	@for platform in $(PLATFORMS); do \
+	  os=$${platform%/*}; \
+	  arch=$${platform#*/}; \
+	  output="dist/threads2md-$${os}-$${arch}"; \
+	  echo "Building $${output}..."; \
+	  GOOS=$${os} GOARCH=$${arch} go build -ldflags="-s -w -X main.version=$(VERSION)" -o $${output} ./cmd/threads2md; \
+	done
+
 clean:
-	rm -rf ./bin
+	rm -rf ./bin ./dist
